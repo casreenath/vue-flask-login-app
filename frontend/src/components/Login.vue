@@ -7,9 +7,9 @@
             <form class="box">
               <h1>Login</h1>
               <p class="text-muted">Please enter your login and password!</p>
-              <input type="text" name="" placeholder="Username" />
-              <input type="password" name="" placeholder="Password" />
-              <input type="submit" name="" value="Login" href="#" />
+              <input type="text" name placeholder="Username" />
+              <input type="password" name placeholder="Password" />
+              <input type="submit" name value="Login" href="#" />
             </form>
           </div>
         </div>
@@ -19,7 +19,7 @@
 </template>
 <script>
 export default {
-  name: "Login",
+  name: "Login"
 };
 </script>
 <style>
@@ -31,15 +31,18 @@ body {
 }
 
 .box {
-    width: 500px;
-    padding: 40px;
-    position: relative;
-    top: 50%;
-    left: 25%;
-    background: #191919;
-    text-align: center;
-    transition: 0.25s;
-    margin-top: 100px;
+  width: 500px;
+  padding: 40px;
+  margin: auto;
+  background: #191919;
+  text-align: center;
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
+  margin-top: 100px;
+}
+
+.box p {
+  color: grey;
 }
 
 .box input[type="text"],
@@ -89,70 +92,70 @@ body {
   background: #2ecc71;
 }
 .forgot {
-    text-decoration: underline
+  text-decoration: underline;
 }
 
 ul.social-network {
-    list-style: none;
-    display: inline;
-    margin-left: 0 !important;
-    padding: 0
+  list-style: none;
+  display: inline;
+  margin-left: 0 !important;
+  padding: 0;
 }
 
 ul.social-network li {
-    display: inline;
-    margin: 0 5px
+  display: inline;
+  margin: 0 5px;
 }
 
 .social-network a.icoFacebook:hover {
-    background-color: #3B5998
+  background-color: #3b5998;
 }
 
 .social-network a.icoTwitter:hover {
-    background-color: #33ccff
+  background-color: #33ccff;
 }
 
 .social-network a.icoGoogle:hover {
-    background-color: #BD3518
+  background-color: #bd3518;
 }
 
 .social-network a.icoFacebook:hover i,
 .social-network a.icoTwitter:hover i,
 .social-network a.icoGoogle:hover i {
-    color: #fff
+  color: #fff;
 }
 
 a.socialIcon:hover,
 .socialHoverClass {
-    color: #44BCDD
+  color: #44bcdd;
 }
 
 .social-circle li a {
-    display: inline-block;
-    position: relative;
-    margin: 0 auto 0 auto;
-    border-radius: 50%;
-    text-align: center;
-    width: 50px;
-    height: 50px;
-    font-size: 20px
+  display: inline-block;
+  position: relative;
+  margin: 0 auto 0 auto;
+  border-radius: 50%;
+  text-align: center;
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
 }
 
 .social-circle li i {
-    margin: 0;
-    line-height: 50px;
-    text-align: center
+  margin: 0;
+  line-height: 50px;
+  text-align: center;
 }
 
 .social-circle li a:hover i,
 .triggeredHover {
-    transform: rotate(360deg);
-    transition: all 0.2s
+  transform: rotate(360deg);
+  transition: all 0.2s;
 }
 
 .social-circle i {
-    color: #fff;
-    transition: all 0.8s;
-    transition: all 0.8s
+  color: #fff;
+  transition: all 0.8s;
+  transition: all 0.8s;
 }
 </style>
