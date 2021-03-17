@@ -1,15 +1,26 @@
 <template>
-  <div>
+  <div class="login">
     <div class="container">
       <div class="row">
         <div class="col-md-6">
           <div class="card">
-            <form class="box">
+            <form class="box" @submit="postLoginData">
               <h1>Login</h1>
               <p class="text-muted">Please enter your login and password!</p>
-              <input type="text" name placeholder="Username" />
-              <input type="password" name placeholder="Password" />
-              <input type="submit" name value="Login" href="#" />
+              <p class="text_warning" v-for="item in error" :key="item.id">{{ item }}</p>
+              <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                v-model="LoginForm.username"
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                v-model="LoginForm.password"
+              />
+              <input type="submit" name="login" value="Login" href="#" />
             </form>
           </div>
         </div>
@@ -18,12 +29,55 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
+import axios from "axios";
+import VueAxios from "vue-axios";
+Vue.use(VueAxios, axios);
 export default {
-  name: "Login"
+  name: "Login",
+  data() {
+    return {
+      LoginForm: {
+        username: null,
+        password: null
+      },
+      error: []
+    };
+  },
+  methods: {
+    postLoginData(e) {
+      this.error = [];
+      if (!this.LoginForm.username) {
+        this.error.push("Username is required");
+      }
+      if (!this.LoginForm.password) {
+        this.error.push("Password is required");
+      }
+      if (this.LoginForm.username && this.LoginForm.password) {
+        console.log(this.LoginForm);
+        this.axios
+          .post("/login", this.LoginForm)
+          .then(result => {
+            console.log(result);
+            if (result.data.loggedin == true) {
+              console.log("Login is validated");
+              this.$router.replace({ path: "/" });
+            } else {
+              this.error.push(result.data.error);
+            }
+          })
+          .catch(error => {
+            // eslint-disable-next-line
+            console.error(error);
+          });
+      }
+      e.preventDefault();
+    }
+  }
 };
 </script>
 <style>
-body {
+.login {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
@@ -33,16 +87,13 @@ body {
 .box {
   width: 500px;
   padding: 40px;
-  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   background: #191919;
   text-align: center;
-  -webkit-transition: 0.25s;
   transition: 0.25s;
   margin-top: 100px;
-}
-
-.box p {
-  color: grey;
 }
 
 .box input[type="text"],
@@ -91,6 +142,7 @@ body {
 .box input[type="submit"]:hover {
   background: #2ecc71;
 }
+
 .forgot {
   text-decoration: underline;
 }
