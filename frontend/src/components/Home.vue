@@ -16,7 +16,7 @@
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template #button-content>
-              <em>Username</em>
+              <em>{{$store.state.userData.username}}</em>
             </template>
             <b-dropdown-item href="#">Account</b-dropdown-item>
             <b-dropdown-item @click="postlogout">Log Out</b-dropdown-item>

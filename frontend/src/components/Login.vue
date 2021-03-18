@@ -61,6 +61,9 @@ export default {
             console.log(result);
             if (result.data.loggedin == true) {
               console.log("Login is validated");
+              this.$store.commit("addUserData", {
+                username: this.LoginForm.username
+              });
               this.$router.replace({ path: "/" });
             } else {
               this.error.push(result.data.error);

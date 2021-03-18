@@ -59,11 +59,49 @@
           </div>
         </template>
         <template #cell(actions)="row">
-          <b-dropdown split text="Reserve" @click="reserveJig(row.item.jigid)" class="m-2">
+          <b-dropdown
+            :disabled="isJigTableButtonDisabled(row)"
+            split
+            @click="reserveJig(row.item)"
+            class="m-2"
+          >
+            <template #button-content>{{jigTableButtonName(row)}}</template>
             <b-dropdown-item>Update</b-dropdown-item>
             <b-dropdown-item>Delete</b-dropdown-item>
-            <b-dropdown-item>View</b-dropdown-item>
+            <b-dropdown-item @click="viewJig(row)">{{ row.detailsShowing ? 'Hide' : 'Show'}} View</b-dropdown-item>
           </b-dropdown>
+        </template>
+        <template #row-details="row">
+          <div class="text-center text-danger my-2" v-if="jigDetailsBusy">
+            <b-spinner class="align-middle"></b-spinner>
+            <strong>Loading...</strong>
+          </div>
+          <div v-else>
+            <b-card>
+              <b-row class="mb-2">
+                <b-col sm="3" class="text-sm-right">
+                  <b>Location:</b>
+                </b-col>
+                <b-col>{{ jigViewDetails.location }}</b-col>
+              </b-row>
+
+              <b-row class="mb-2">
+                <b-col sm="3" class="text-sm-right">
+                  <b>No of CEPs:</b>
+                </b-col>
+                <b-col>{{ jigViewDetails.cepList.length }}</b-col>
+              </b-row>
+
+              <b-row class="mb-2">
+                <b-col sm="3" class="text-sm-right">
+                  <b>Jig Type:</b>
+                </b-col>
+                <b-col>{{ jigViewDetails.jigType }}</b-col>
+              </b-row>
+
+              <b-button size="sm" @click="row.toggleDetails">Hide Details</b-button>
+            </b-card>
+          </div>
         </template>
       </b-table>
     </b-container>
@@ -80,8 +118,8 @@ export default {
   name: "JigManager",
   created() {
     console.log("Created JigManager ");
-    // this.tableBusy = true;
-    // this.getJigDetails();
+    this.tableBusy = true;
+    this.getJigDetails();
   },
   mounted() {},
   destroyed() {
@@ -104,7 +142,9 @@ export default {
       tableSortBy: "jigid",
       tableSortDesc: false,
       filter: null,
-      filterOn: []
+      filterOn: [],
+      jigViewDetails: {},
+      jigDetailsBusy: false
     };
   },
   methods: {
@@ -120,7 +160,7 @@ export default {
             this.tableItems = resp.data.rslt;
             console.log(this.tableItems);
           } else {
-            this.errors.push(result.data.error);
+            this.errors.push(resp.data.error);
           }
         })
         .catch(error => {
@@ -131,7 +171,76 @@ export default {
       //   e.preventDefault();
     },
     reserveJig(item) {
-      console.log("Reserve Jig", item);
+      console.log(
+        "Reserve Jig",
+        item.jigid,
+        "for",
+        this.$store.state.userData.username
+      );
+      var apiData = {
+        jigid: item.jigid,
+        jigowner: this.$store.state.userData.username
+      };
+      this.errors = [];
+      this.axios
+        .post("/postreservejig", apiData)
+        .then(result => {
+          console.log(result);
+          if (result.data.status == true) {
+            console.log("Jig Reservation Queued");
+            alert(
+              "Jig Reservation request has been queued. Please check back in a while"
+            );
+            this.jigViewDetails = result.data.rslt;
+            this.jigDetailsBusy = false;
+          } else {
+            this.errors.push(result.data.error);
+          }
+        })
+        .catch(error => {
+          // eslint-disable-next-line
+          console.error(error);
+          this.errors.push(error);
+        });
+    },
+    viewJig(row) {
+      row.toggleDetails();
+      this.jigDetailsBusy = true;
+      console.log("View Jig", row.item.jigid);
+      this.errors = [];
+      this.axios
+        .post("/postjigdetails", row.item)
+        .then(result => {
+          console.log(result);
+          if (result.data.status == true) {
+            console.log("jig details received");
+            this.jigViewDetails = result.data.rslt;
+            this.jigDetailsBusy = false;
+          } else {
+            this.errors.push(result.data.error);
+          }
+        })
+        .catch(error => {
+          // eslint-disable-next-line
+          console.error(error);
+          this.errors.push(error);
+        });
+    },
+    jigTableButtonName(row) {
+      if (row.item.status == "Idle") {
+        return "Reserve";
+      } else if (row.item.status == "Reserved") {
+        return "Release";
+      }
+    },
+    isJigTableButtonDisabled(row) {
+      if (row.item.owner == "None") {
+        return false;
+      } else if (row.item.owner != this.$store.state.userData.username) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 };

@@ -7,6 +7,11 @@ class CommonUtils:
     def __init__(self):
         return
 
+    def remove_unwanted_str(self, input_str):
+        output_str = str(input_str).replace(
+            "[", "").replace("]", "").replace('"', "")
+        return output_str
+
     def api_call_retry(self, url, parameters=None, count=3,
                        call_method="post", timeout=100):
         try:
